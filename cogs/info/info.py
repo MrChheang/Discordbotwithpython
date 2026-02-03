@@ -6,20 +6,20 @@ import platform
 
 class Info(commands.Cog):
     """Info command to display detailed bot information"""
-    
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     def get_uptime(self):
         """Calculate and format the bot's uptime"""
         now = datetime.now(timezone.utc)
-        start_time = self.bot.start_time.replace(tzinfo=timezone.utc)
-        delta = now - start_time
-        
+        # start_time is already timezone-aware from main.py
+        delta = now - self.bot.start_time
+
         days = delta.days
         hours, remainder = divmod(delta.seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
-        
+
         parts = []
         if days > 0:
             parts.append(f"{days}d")
@@ -28,7 +28,7 @@ class Info(commands.Cog):
         if minutes > 0:
             parts.append(f"{minutes}m")
         parts.append(f"{seconds}s")
-        
+
         return " ".join(parts)
 
     def create_info_embed(self, user):
@@ -39,20 +39,20 @@ class Info(commands.Cog):
         total_channels = sum(len(guild.channels) for guild in self.bot.guilds)
         uptime = self.get_uptime()
         latency = round(self.bot.latency * 1000)
-        
+
         # Bot created date
         created_at = self.bot.user.created_at
-        
+
         embed = discord.Embed(
             title=f"ℹ️ {self.bot.user.name} Information",
             description="Here's everything you need to know about me!",
             color=discord.Color.blurple()
         )
-        
+
         # Set bot avatar as thumbnail
         if self.bot.user.avatar:
             embed.set_thumbnail(url=self.bot.user.avatar.url)
-        
+
         # Bot Info Section
         embed.add_field(
             name="🤖 Bot Info",
@@ -61,7 +61,7 @@ class Info(commands.Cog):
                   f"**Developer:** {self.bot.developer}",
             inline=True
         )
-        
+
         # Statistics Section
         embed.add_field(
             name="📊 Statistics",
@@ -70,7 +70,7 @@ class Info(commands.Cog):
                   f"**Channels:** {total_channels:,}",
             inline=True
         )
-        
+
         # Performance Section
         embed.add_field(
             name="⚡ Performance",
@@ -79,7 +79,7 @@ class Info(commands.Cog):
                   f"**Python:** {platform.python_version()}",
             inline=True
         )
-        
+
         # Technical Info Section
         embed.add_field(
             name="🛠️ Technical",
@@ -88,7 +88,7 @@ class Info(commands.Cog):
                   f"**Prefix:** `!` or `/`",
             inline=True
         )
-        
+
         # Bot Created Section
         embed.add_field(
             name="📅 Bot Created",
@@ -96,7 +96,7 @@ class Info(commands.Cog):
                   f"()",
             inline=True
         )
-        
+
         # Links Section (customize these)
         embed.add_field(
             name="🔗 Links",
@@ -105,13 +105,13 @@ class Info(commands.Cog):
                   "[GitHub](https://github.com/your-repo)",
             inline=True
         )
-        
+
         embed.set_footer(
             text=f"Requested by {user.name} • Made with ❤️ using discord.py",
             icon_url=user.display_avatar.url
         )
         embed.timestamp = datetime.now(timezone.utc)
-        
+
         return embed
 
     # Slash command: /info

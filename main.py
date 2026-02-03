@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 import os
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
+import traceback
 from keep_alive import keep_alive
 
 # Bot configuration
@@ -18,7 +19,7 @@ class MyBot(commands.Bot):
             intents=intents,
             help_command=None  # Disable default help command
         )
-        self.start_time = datetime.utcnow()  # Track bot start time for uptime
+        self.start_time = datetime.now(timezone.utc)  # Track bot start time for uptime
         self.developer = "YourName"  # Change to your name/username
 
     async def setup_hook(self):
@@ -35,6 +36,7 @@ class MyBot(commands.Bot):
                 print(f'✅ Loaded: {cog}')
             except Exception as e:
                 print(f'❌ Failed to load {cog}: {e}')
+                traceback.print_exc()
 
         # Sync slash commands globally
         try:
