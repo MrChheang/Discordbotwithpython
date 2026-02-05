@@ -11,7 +11,8 @@ class Uptime(commands.Cog):
         self.bot = bot
 
     def format_uptime(self):
-        delta = datetime.now(timezone.utc) - self.bot.start_time
+        now = datetime.now(timezone.utc)
+        delta = now - self.bot.start_time
 
         days = delta.days
         hours, rem = divmod(delta.seconds, 3600)
@@ -28,10 +29,18 @@ class Uptime(commands.Cog):
 
         return " ".join(parts)
 
+    def get_timestamps(self):
+        # Get unix timestamp as integer
+        ts = int(self.bot.start_time.timestamp())
+        return {
+            "relative": f"<t:{ts}:R>",
+            "full": f"<t:{ts}:F>"
+        }
+
     @app_commands.command(name="uptime", description="Check how long the bot has been running")
     async def uptime_slash(self, interaction: discord.Interaction):
-        start_ts = int(self.bot.start_time.timestamp())
         uptime_str = self.format_uptime()
+        timestamps = self.get_timestamps()
 
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Uptime", icon_url=self.bot.user.display_avatar.url)
@@ -43,12 +52,12 @@ class Uptime(commands.Cog):
         )
         embed.add_field(
             name="Since",
-            value=f"",
+            value=timestamps["relative"],
             inline=True
         )
         embed.add_field(
             name="Started",
-            value=f"",
+            value=timestamps["full"],
             inline=True
         )
 
@@ -59,8 +68,8 @@ class Uptime(commands.Cog):
 
     @commands.command(name="uptime", aliases=["up"])
     async def uptime_prefix(self, ctx):
-        start_ts = int(self.bot.start_time.timestamp())
         uptime_str = self.format_uptime()
+        timestamps = self.get_timestamps()
 
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Uptime", icon_url=self.bot.user.display_avatar.url)
@@ -72,12 +81,12 @@ class Uptime(commands.Cog):
         )
         embed.add_field(
             name="Since",
-            value=f"",
+            value=timestamps["relative"],
             inline=True
         )
         embed.add_field(
             name="Started",
-            value=f"",
+            value=timestamps["full"],
             inline=True
         )
 

@@ -43,14 +43,16 @@ class InfoSelect(discord.ui.Select):
         return self.overview()
 
     def overview(self):
-        created = int(self.bot.user.created_at.timestamp())
+        # Bot creation timestamp
+        created_ts = int(self.bot.user.created_at.timestamp())
 
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)
+        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
 
         embed.add_field(name="Developer", value="<@1464984679982567454>", inline=True)
         embed.add_field(name="Library", value="discord.py", inline=True)
-        embed.add_field(name="Created", value=f"", inline=True)
+        embed.add_field(name="Created", value=f"<t:{created_ts}:R>", inline=True)
 
         embed.set_footer(text="Use the menu to explore more")
         embed.timestamp = datetime.now(timezone.utc)
@@ -102,6 +104,26 @@ class InfoView(discord.ui.View):
     def __init__(self, bot, user):
         super().__init__(timeout=60)
         self.add_item(InfoSelect(bot, user))
+        self.message = None
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except:
+                pass
+        self.message = None
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except:
+                pass
 
 
 class Info(commands.Cog):
@@ -113,12 +135,14 @@ class Info(commands.Cog):
         view = InfoView(self.bot, interaction.user)
         embed = view.children[0].overview()
         await interaction.response.send_message(embed=embed, view=view)
+        view.message = await interaction.original_response()
 
     @commands.command(name="info", aliases=["about"])
     async def info_prefix(self, ctx):
         view = InfoView(self.bot, ctx.author)
         embed = view.children[0].overview()
-        await ctx.send(embed=embed, view=view)
+        msg = await ctx.send(embed=embed, view=view)
+        view.message = msg
 
 
 async def setup(bot):
