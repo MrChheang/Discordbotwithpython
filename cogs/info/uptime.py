@@ -13,11 +13,11 @@ class Uptime(commands.Cog):
     def format_uptime(self):
         now = datetime.now(timezone.utc)
         delta = now - self.bot.start_time
-
+        
         days = delta.days
         hours, rem = divmod(delta.seconds, 3600)
         minutes, seconds = divmod(rem, 60)
-
+        
         parts = []
         if days > 0:
             parts.append(f"{days}d")
@@ -26,7 +26,7 @@ class Uptime(commands.Cog):
         if minutes > 0:
             parts.append(f"{minutes}m")
         parts.append(f"{seconds}s")
-
+        
         return " ".join(parts)
 
     def get_timestamps(self):
@@ -41,10 +41,10 @@ class Uptime(commands.Cog):
     async def uptime_slash(self, interaction: discord.Interaction):
         uptime_str = self.format_uptime()
         timestamps = self.get_timestamps()
-
+        
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Uptime", icon_url=self.bot.user.display_avatar.url)
-
+        
         embed.add_field(
             name="Running for",
             value=f"```{uptime_str}```",
@@ -60,20 +60,20 @@ class Uptime(commands.Cog):
             value=timestamps["full"],
             inline=True
         )
-
+        
         embed.set_footer(text=f"Requested by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
         embed.timestamp = datetime.now(timezone.utc)
-
+        
         await interaction.response.send_message(embed=embed)
 
     @commands.command(name="uptime", aliases=["up"])
     async def uptime_prefix(self, ctx):
         uptime_str = self.format_uptime()
         timestamps = self.get_timestamps()
-
+        
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Uptime", icon_url=self.bot.user.display_avatar.url)
-
+        
         embed.add_field(
             name="Running for",
             value=f"```{uptime_str}```",
@@ -89,10 +89,10 @@ class Uptime(commands.Cog):
             value=timestamps["full"],
             inline=True
         )
-
+        
         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar.url)
         embed.timestamp = datetime.now(timezone.utc)
-
+        
         await ctx.send(embed=embed)
 
 
