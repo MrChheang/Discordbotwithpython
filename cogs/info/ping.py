@@ -30,13 +30,13 @@ class Ping(commands.Cog):
         await interaction.response.defer()
         api = round((time.perf_counter() - start) * 1000)
         ws = round(self.bot.latency * 1000)
-
+        
         status = self.get_status(ws)
         bar = self.make_bar(ws)
-
+        
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Pong!", icon_url=self.bot.user.display_avatar.url)
-
+        
         embed.add_field(
             name="Websocket",
             value=f"```{ws}ms```",
@@ -52,16 +52,16 @@ class Ping(commands.Cog):
             value=f"```{status}```",
             inline=True
         )
-
+        
         embed.add_field(
             name="Latency",
             value=f"`{bar}` {ws}ms",
             inline=False
         )
-
+        
         embed.set_footer(text=f"Requested by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
         embed.timestamp = datetime.now(timezone.utc)
-
+        
         await interaction.followup.send(embed=embed)
 
     @commands.command(name="ping", aliases=["p"])
@@ -70,13 +70,13 @@ class Ping(commands.Cog):
         msg = await ctx.send("Pinging...")
         api = round((time.perf_counter() - start) * 1000)
         ws = round(self.bot.latency * 1000)
-
+        
         status = self.get_status(ws)
         bar = self.make_bar(ws)
-
+        
         embed = discord.Embed(color=Colors.MAIN)
         embed.set_author(name="Pong!", icon_url=self.bot.user.display_avatar.url)
-
+        
         embed.add_field(
             name="Websocket",
             value=f"```{ws}ms```",
@@ -92,16 +92,16 @@ class Ping(commands.Cog):
             value=f"```{status}```",
             inline=True
         )
-
+        
         embed.add_field(
             name="Latency",
             value=f"`{bar}` {ws}ms",
             inline=False
         )
-
+        
         embed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.display_avatar.url)
         embed.timestamp = datetime.now(timezone.utc)
-
+        
         await msg.edit(content=None, embed=embed)
 
 
