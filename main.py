@@ -22,11 +22,11 @@ logger = logging.getLogger('discord')
 # Bot configuration
 BOT_CONFIG = {
     'prefix': '!',                    # Command prefix
-    'developer': 'YourName',          # Your name/username
-    'version': '1.0.0',               # Bot version
-    'color': 0x5865F2,                # Default embed color (Discord Blurple)
-    'support_server': 'https://discord.gg/your-server',
-    'github': 'https://github.com/your-repo'
+    'developer': '<@1464984679982567454>',
+    'version': '1.0.0',
+    'color': 0x5865F2,
+    'support_server': 'https://discord.gg/NJZvYZP4Cd',
+    'github': None
 }
 
 # Intents configuration
