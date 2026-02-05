@@ -83,6 +83,7 @@ class PremiumBot(commands.Bot):
             'cogs.info.ping',
             'cogs.info.uptime',
             'cogs.info.info',
+            'cogs.info.news',
             'cogs.setup.prefix',
             'cogs.developer.dev'
         ]
