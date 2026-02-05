@@ -107,6 +107,147 @@ class PremiumBot(commands.Bot):
 bot = PremiumBot()
 
 
+class MentionSelect(discord.ui.Select):
+    def __init__(self, bot, user):
+        self.bot = bot
+        self.original_user = user
+        
+        options = [
+            discord.SelectOption(label="Bot Information", emoji="🤖", value="info", description="Learn about the bot"),
+            discord.SelectOption(label="Changelogs", emoji="📋", value="changelog", description="Recent updates"),
+            discord.SelectOption(label="Support", emoji="💬", value="support", description="Get help"),
+        ]
+        
+        super().__init__(placeholder="What would you like to know?", options=options)
+    
+    async def callback(self, interaction: discord.Interaction):
+        if interaction.user.id != self.original_user.id:
+            return await interaction.response.send_message("This menu isn't for you.", ephemeral=True)
+        
+        if self.values[0] == "info":
+            embed = self.bot_info()
+        elif self.values[0] == "changelog":
+            embed = self.changelog()
+        elif self.values[0] == "support":
+            embed = self.support()
+        
+        for opt in self.options:
+            opt.default = opt.value == self.values[0]
+        
+        await interaction.response.edit_message(embed=embed, view=self.view)
+    
+    def bot_info(self):
+        embed = discord.Embed(color=0x5DBB63)
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.display_avatar.url)
+        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
+        
+        embed.description = f"A premium Discord bot designed to enhance your server experience with powerful features and reliable performance."
+        
+        embed.add_field(name="Developer", value="<@1464984679982567454>", inline=True)
+        embed.add_field(name="Servers", value=f"`{len(self.bot.guilds)}`", inline=True)
+        embed.add_field(name="Users", value=f"`{len(set(self.bot.get_all_members()))}`", inline=True)
+        
+        embed.add_field(name="Prefix", value="`!` or `/`", inline=True)
+        embed.add_field(name="Library", value="discord.py", inline=True)
+        embed.add_field(name="Version", value=f"`{self.bot.version}`", inline=True)
+        
+        return embed
+    
+    def changelog(self):
+        embed = discord.Embed(color=0x5DBB63)
+        embed.set_author(name="Changelogs", icon_url=self.bot.user.display_avatar.url)
+        
+        embed.description = "Latest updates and improvements"
+        
+        embed.add_field(
+            name="📦 v1.0.0 - Initial Release",
+            value="> • Premium bot launched\n> • Added /ping, /uptime, /info commands\n> • Custom prefix per server\n> • Auto-updating status",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="🔮 Coming Soon",
+            value="> • Moderation commands\n> • Music features\n> • Economy system\n> • Leveling system",
+            inline=False
+        )
+        
+        embed.set_footer(text="Stay tuned for more updates!")
+        
+        return embed
+    
+    def support(self):
+        embed = discord.Embed(color=0x5DBB63)
+        embed.set_author(name="Support", icon_url=self.bot.user.display_avatar.url)
+        
+        embed.description = "Need help? We're here for you!"
+        
+        embed.add_field(
+            name="💬 Support Server",
+            value=f"[Click to join](https://discord.gg/NJZvYZP4Cd)",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="📌 Quick Help",
+            value="> • Use `/help` to see all commands\n> • Use `/info` for bot information\n> • Server owner can use `/setup-prefix` to change prefix",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="🐛 Found a Bug?",
+            value="Report it in our support server and we'll fix it ASAP!",
+            inline=False
+        )
+        
+        embed.set_footer(text="Thanks for using our bot! 💚")
+        
+        return embed
+
+
+class MentionView(discord.ui.View):
+    def __init__(self, bot, user):
+        super().__init__(timeout=120)
+        self.add_item(MentionSelect(bot, user))
+        self.message = None
+    
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except:
+                pass
+
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+    
+    # Check if bot is mentioned
+    if bot.user in message.mentions:
+        embed = discord.Embed(color=0x5DBB63)
+        embed.set_author(name=bot.user.name, icon_url=bot.user.display_avatar.url)
+        embed.set_thumbnail(url=bot.user.display_avatar.url)
+        
+        embed.description = f"Hey {message.author.mention}! 👋\n\nThanks for reaching out! I'm a premium bot here to help your server.\n\nUse the menu below to learn more about me."
+        
+        embed.add_field(
+            name="Quick Start",
+            value=f"> **Prefix:** `!` or `/`\n> **Help:** `/help` or `!help`\n> **Info:** `/info` or `!info`",
+            inline=False
+        )
+        
+        embed.set_footer(text="Select an option below to continue")
+        
+        view = MentionView(bot, message.author)
+        msg = await message.channel.send(embed=embed, view=view)
+        view.message = msg
+    
+    await bot.process_commands(message)
+
+
 @bot.event
 async def on_ready():
     print()
