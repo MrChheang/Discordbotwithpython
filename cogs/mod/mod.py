@@ -134,16 +134,7 @@ class ModerationCog(commands.Cog):
         await member.kick(reason=f"{reason} | By: {ctx.author}")
         await self.send_success(ctx, f"{Emojis.CHECK} **{member}** has been kicked.\n**Reason:** {reason}")
 
-    @kick_prefix.error
-    async def kick_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await self.send_error(ctx, f"{Emojis.CROSS} Please mention a member to kick.\n**Usage:** `!kick @member [reason]`")
-        elif isinstance(error, commands.MemberNotFound):
-            await self.send_error(ctx, f"{Emojis.CROSS} Member not found. Please mention a valid member.")
-        elif isinstance(error, commands.MissingPermissions):
-            await self.send_error(ctx, f"{Emojis.CROSS} You don't have permission to kick members.")
-        elif isinstance(error, commands.BotMissingPermissions):
-            await self.send_error(ctx, f"{Emojis.CROSS} I don't have permission to kick members.")
+
 
     # ═══════════════════════════════════════════════════════════
     # BAN COMMAND
@@ -182,16 +173,7 @@ class ModerationCog(commands.Cog):
         await member.ban(reason=f"{reason} | By: {ctx.author}")
         await self.send_success(ctx, f"{Emojis.CHECK} **{member}** has been banned.\n**Reason:** {reason}")
 
-    @ban_prefix.error
-    async def ban_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await self.send_error(ctx, f"{Emojis.CROSS} Please mention a member to ban.\n**Usage:** `!ban @member [reason]`")
-        elif isinstance(error, commands.MemberNotFound):
-            await self.send_error(ctx, f"{Emojis.CROSS} Member not found. Please mention a valid member.")
-        elif isinstance(error, commands.MissingPermissions):
-            await self.send_error(ctx, f"{Emojis.CROSS} You don't have permission to ban members.")
-        elif isinstance(error, commands.BotMissingPermissions):
-            await self.send_error(ctx, f"{Emojis.CROSS} I don't have permission to ban members.")
+
 
     # ═══════════════════════════════════════════════════════════
     # UNBAN COMMAND
@@ -288,14 +270,7 @@ class ModerationCog(commands.Cog):
         await member.timeout(timedelta(seconds=seconds), reason=f"{reason} | By: {ctx.author}")
         await self.send_success(ctx, f"{Emojis.CHECK} **{member}** has been timed out for **{duration}**.\n**Reason:** {reason}")
 
-    @timeout_prefix.error
-    async def timeout_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await self.send_error(ctx, f"{Emojis.CROSS} Missing arguments.\n**Usage:** `!timeout @member <duration> [reason]`\n**Example:** `!timeout @user 5m Spamming`")
-        elif isinstance(error, commands.MemberNotFound):
-            await self.send_error(ctx, f"{Emojis.CROSS} Member not found. Please mention a valid member.")
-        elif isinstance(error, commands.MissingPermissions):
-            await self.send_error(ctx, f"{Emojis.CROSS} You don't have permission to timeout members.")
+
 
     # ═══════════════════════════════════════════════════════════
     # REMOVE TIMEOUT COMMAND
