@@ -83,9 +83,10 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
-    if bot.user in message.mentions:
+    if bot.user in message.mentions and len(message.content.strip()) < 30:
         embed = discord.Embed(color=0x5DBB63, description=f"Hey {message.author.mention}! 👋\n\nMy prefix is `!` or use `/` for slash commands.")
         await message.channel.send(embed=embed)
+        return
     await bot.process_commands(message)
 
 keep_alive()
